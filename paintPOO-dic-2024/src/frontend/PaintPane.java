@@ -17,6 +17,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,8 @@ import java.util.Map;
 import javax.swing.text.LabelView;
 
 public class PaintPane extends BorderPane {
+
+	private final int DUPLICATION_OFFSET = 2;
 
 	// BackEnd
 	CanvasState canvasState;
@@ -51,6 +54,13 @@ public class PaintPane extends BorderPane {
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 	ColorPicker secondaryfillColorPicker = new ColorPicker(defaultFillColor);
 	Button copiarFmtButton = new Button("Copiar Fmt.");
+
+
+	Button turnRightButton = new Button("Girar D");
+    Button flipHorButton = new Button("Voltear H");
+    Button flipVerButton = new Button("Voltear V");
+    Button duplicateButton = new Button("Duplicar");
+    Button divideButton = new Button("Dividir");
 
 	// Dibujar una figura
 	Point startPoint;
@@ -84,6 +94,32 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
+
+		Button[] ManipulationArr = {turnRightButton, flipHorButton, flipVerButton, duplicateButton, divideButton};
+        for (Button manip : ManipulationArr) {
+            manip.setMinWidth(90);
+            manip.setCursor(Cursor.HAND);
+        }
+
+        // Arrange buttons vertically
+        VBox buttonsManipulationBox = new VBox(10);
+        buttonsManipulationBox.getChildren().addAll(ManipulationArr);
+        buttonsManipulationBox.getChildren().add(fillColorPicker);
+        buttonsManipulationBox.setPadding(new Insets(5));
+        buttonsManipulationBox.setStyle("-fx-background-color: #999");
+        buttonsManipulationBox.setPrefWidth(100);
+		HBox layout = new HBox();
+		layout.getChildren().addAll(buttonsManipulationBox, canvas);
+		setCenter(layout);
+
+        // Handle button actions
+        turnRightButton.setOnAction(event -> rotateSelectedFigure());
+        flipHorButton.setOnAction(event -> flipHorizontal());
+        flipVerButton.setOnAction(event -> flipVertical());
+        duplicateButton.setOnAction(event -> duplicateSelectedFigure());
+        divideButton.setOnAction(event -> divideSelectedFigure());
+
+        
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
@@ -226,6 +262,45 @@ public class PaintPane extends BorderPane {
 			gc.fillOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2) + offset, ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2) + offset, ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
 		}
 	}
+	private void rotateSelectedFigure() {
+        if (selectedFigure != null) {
+            selectedFigure.rotate(); 
+            redrawCanvas();
+        }
+    }
+
+    private void flipHorizontal() {
+        if (selectedFigure != null) {
+            selectedFigure.flipHorizontal();
+            redrawCanvas();
+        }
+    }
+
+    private void flipVertical() {
+        if (selectedFigure != null) {
+            selectedFigure.flipVertical();
+            redrawCanvas();
+        }
+    }
+
+    private void duplicateSelectedFigure() {
+        if (selectedFigure != null) {
+            Figure duplicate = selectedFigure.duplicate(DUPLICATION_OFFSET); 
+            canvasState.addFigure(duplicate);
+            redrawCanvas();
+        }
+    }
+
+    private void divideSelectedFigure() {
+        if (selectedFigure != null) {
+            Figure[] dividedFigures = selectedFigure.divide();  // No offset here
+            for (Figure dividedFigure : dividedFigures) {
+                canvasState.addFigure(dividedFigure);
+            }
+            redrawCanvas();
+        }
+    }
+    
 
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

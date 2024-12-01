@@ -1,7 +1,7 @@
 @echo off
 REM Set the source and output directories
 set BIN_DIR=bin
-set JAVAFX_LIB_PATH=C:/Users/Usuario/openjfx-22.0.2_windows-x64_bin-sdk/javafx-sdk-22.0.2/lib
+set JAVAFX_LIB_PATH=C:\Users\Joaco\javafx-sdk-22.0.2\lib
 
 REM Create bin folder if it doesn't exist
 if not exist "%BIN_DIR%" (

@@ -1,9 +1,9 @@
 package backend.model;
 
-public class Ellipse implements Figure {
+public class Ellipse extends Figure {
 
-    protected final Point centerPoint;
-    protected final double sMayorAxis, sMinorAxis;
+    protected  Point centerPoint;
+    protected  double sMayorAxis, sMinorAxis;
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
         this.centerPoint = centerPoint;
@@ -27,5 +27,37 @@ public class Ellipse implements Figure {
     public double getsMinorAxis() {
         return sMinorAxis;
     }
+
+    @Override
+    public void rotate() {
+        double aux = sMayorAxis;
+        sMayorAxis = sMinorAxis;
+        sMinorAxis = aux;
+    }
+
+    @Override
+    public void flipHorizontal() {
+        centerPoint = new Point(-centerPoint.getX(), centerPoint.getY());
+    }
+
+    @Override
+    public void flipVertical() {
+        centerPoint = new Point(centerPoint.getX(), -centerPoint.getY());
+    }
+
+    @Override
+    public Figure duplicate(int offset) {
+        Point newCenter = new Point(centerPoint.getX() + offset, centerPoint.getY() + offset);
+        return new Ellipse(newCenter, sMayorAxis, sMinorAxis);  
+    }
+
+    @Override
+public Figure[] divide() {
+    Ellipse topHalf = new Ellipse(new Point(centerPoint.getX(), centerPoint.getY() + sMinorAxis / 2), sMayorAxis, sMinorAxis / 2);
+    Ellipse bottomHalf = new Ellipse(new Point(centerPoint.getX(), centerPoint.getY() - sMinorAxis / 2), sMayorAxis, sMinorAxis / 2);
+
+    return new Figure[]{topHalf, bottomHalf};
+}
+
 
 }
