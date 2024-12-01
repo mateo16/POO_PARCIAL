@@ -12,9 +12,16 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.control.Label; 
+import javafx.scene.control.ChoiceBox;
+import javafx.collections.FXCollections;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Button;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.text.LabelView;
 
 public class PaintPane extends BorderPane {
 
@@ -35,8 +42,15 @@ public class PaintPane extends BorderPane {
 	ToggleButton ellipseButton = new ToggleButton("Elipse");
 	ToggleButton deleteButton = new ToggleButton("Borrar");
 
-	// Selector de color de relleno
+	Label formatLabel = new Label("Formato");
+
+	// Opciones de Formato
+	String shadowStrings[] = { "Simple", "Coloreada", "Simple Inversa", "Coloreada Inversa" };
+	ChoiceBox<String> shadowChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(shadowStrings));
+	CheckBox biseladoCheckBox = new CheckBox("Biselado");
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
+	ColorPicker secondaryfillColorPicker = new ColorPicker(defaultFillColor);
+	Button copiarFmtButton = new Button("Copiar Fmt.");
 
 	// Dibujar una figura
 	Point startPoint;
@@ -62,7 +76,10 @@ public class PaintPane extends BorderPane {
 		}
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
-		buttonsBox.getChildren().add(fillColorPicker);
+		buttonsBox.getChildren().addAll(formatLabel, shadowChoiceBox, biseladoCheckBox, fillColorPicker, secondaryfillColorPicker, copiarFmtButton);
+		shadowChoiceBox.setValue(shadowStrings[0]);
+		copiarFmtButton.setMinWidth(90);
+		copiarFmtButton.setCursor(Cursor.HAND);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
