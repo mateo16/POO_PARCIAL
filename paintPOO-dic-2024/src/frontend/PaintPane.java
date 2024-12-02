@@ -12,12 +12,18 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.util.Pair;
 import javafx.scene.control.Label; 
 import javafx.scene.control.ChoiceBox;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +78,7 @@ public class PaintPane extends BorderPane {
 	StatusPane statusPane;
 
 	// Colores de relleno de cada figura
-	Map<Figure, Color> figureColorMap = new HashMap<>();
+	Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
@@ -104,7 +110,6 @@ public class PaintPane extends BorderPane {
         // Arrange buttons vertically
         VBox buttonsManipulationBox = new VBox(10);
         buttonsManipulationBox.getChildren().addAll(ManipulationArr);
-        buttonsManipulationBox.getChildren().add(fillColorPicker);
         buttonsManipulationBox.setPadding(new Insets(5));
         buttonsManipulationBox.setStyle("-fx-background-color: #999");
         buttonsManipulationBox.setPrefWidth(100);
@@ -152,7 +157,7 @@ public class PaintPane extends BorderPane {
 			} else {
 				return ;
 			}
-			figureColorMap.put(newFigure, fillColorPicker.getValue());
+			figureColorMap.put(newFigure, new Pair<>(fillColorPicker.getValue(), secondaryfillColorPicker.getValue()));
 			canvasState.addFigure(newFigure);
 			startPoint = null;
 			redrawCanvas();
@@ -323,9 +328,12 @@ public class PaintPane extends BorderPane {
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
+			Color firstFillColor = figureColorMap.get(figure).getKey();
+			Color secondFillColor = figureColorMap.get(figure).getValue();
+			
 			gc.setStroke(Color.TRANSPARENT);
 			if(figure.getShadowType().getColored()){
-				gc.setFill(figureColorMap.get(figure).darker());
+				gc.setFill(firstFillColor.darker());
 			}else{
 				gc.setFill(Color.GRAY);
 			}
@@ -337,7 +345,21 @@ public class PaintPane extends BorderPane {
 			} else {
 				gc.setStroke(lineColor);
 			}
-			gc.setFill(figureColorMap.get(figure));
+
+			if(figure instanceof Rectangle) {
+				LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
+      			CycleMethod.NO_CYCLE,
+      			new Stop(0, firstFillColor),
+      			new Stop(1, secondFillColor));
+				gc.setFill(linearGradient);
+			}else{
+				RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+				CycleMethod.NO_CYCLE,
+				new Stop(0, firstFillColor),
+				new Stop(1, secondFillColor));
+			  gc.setFill(radialGradient);
+			}
+
 			drawFigure(figure, 0);
 
 		}
