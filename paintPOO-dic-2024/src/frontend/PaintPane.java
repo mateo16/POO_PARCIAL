@@ -306,7 +306,7 @@ public class PaintPane extends BorderPane {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
 			gc.setStroke(Color.TRANSPARENT);
-			gc.setFill(Color.GRAY);
+			gc.setFill(Color.GRAY);	
 			drawFigure(figure, 10.0);
 			
 			if(figure == selectedFigure) {

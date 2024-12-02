@@ -19,14 +19,20 @@ public class Rectangle extends Figure {
 
     @Override
     public void rotate(){
-        double centerX = (topLeft.getX()+bottomRight.getX())/2;
-        double centerY = (topLeft.getY()+bottomRight.getY())/2;
-
-        double newTopLeftX = centerX + (topLeft.getY() - centerY);
-        double newTopLeftY = centerY - (topLeft.getX() - centerX);
-        double newBottomRightX = centerX + (bottomRight.getY() - centerY);
-        double newBottomRightY = centerY - (bottomRight.getX() - centerX);
-
+        double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
+        double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
+    
+        // Calculate the width and height of the rectangle
+        double width = Math.abs(bottomRight.getX() - topLeft.getX());
+        double height = Math.abs(bottomRight.getY() - topLeft.getY());
+    
+        // Swap the width and height for rotation
+        double newTopLeftX = centerX - height / 2;
+        double newTopLeftY = centerY - width / 2;
+        double newBottomRightX = centerX + height / 2;
+        double newBottomRightY = centerY + width / 2;
+    
+        // Update rectangle points
         topLeft = new Point(newTopLeftX, newTopLeftY);
         bottomRight = new Point(newBottomRightX, newBottomRightY);
     }
@@ -58,10 +64,14 @@ public Figure duplicate(int offset) {
 
 @Override
 public Figure[] divide() {
-    double midX = (topLeft.getX() + bottomRight.getX()) / 2;  // Split horizontally in the middle
-    Rectangle leftHalf = new Rectangle(topLeft, new Point(midX, bottomRight.getY()));
-    Rectangle rightHalf = new Rectangle(new Point(midX, topLeft.getY()), bottomRight);
+    double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
+    double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
+    double height = bottomRight.getY() - topLeft.getY(); 
 
+    
+    Rectangle leftHalf = new Rectangle(new Point(topLeft.getX(), topLeft.getY()+ height/4),  new Point(centerX, centerY+ height/4));
+    Rectangle rightHalf = new Rectangle(new Point(centerX, centerY - height/4),  new Point(bottomRight.getX(), bottomRight.getY() - height/4));
+    
     return new Figure[]{leftHalf, rightHalf};
 }
 

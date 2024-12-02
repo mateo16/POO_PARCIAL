@@ -53,11 +53,29 @@ public class Ellipse extends Figure {
 
     @Override
 public Figure[] divide() {
-    Ellipse topHalf = new Ellipse(new Point(centerPoint.getX(), centerPoint.getY() + sMinorAxis / 2), sMayorAxis, sMinorAxis / 2);
-    Ellipse bottomHalf = new Ellipse(new Point(centerPoint.getX(), centerPoint.getY() - sMinorAxis / 2), sMayorAxis, sMinorAxis / 2);
+    // Calculate the new semi-major and semi-minor axes for the divided ellipses
+    double newSemiMajorAxis = sMayorAxis / 2;
+    double newSemiMinorAxis = sMinorAxis / 2;
 
-    return new Figure[]{topHalf, bottomHalf};
+    // Create the left ellipse
+    Ellipse leftHalf = new Ellipse(
+        new Point(centerPoint.getX() - newSemiMajorAxis / 2, centerPoint.getY()), // Adjust X leftward
+        newSemiMajorAxis,
+        newSemiMinorAxis
+    );
+
+    // Create the right ellipse
+    Ellipse rightHalf = new Ellipse(
+        new Point(centerPoint.getX() + newSemiMajorAxis / 2, centerPoint.getY()), // Adjust X rightward
+        newSemiMajorAxis,
+        newSemiMinorAxis
+    );
+
+    // Return the two new ellipses
+    return new Figure[]{leftHalf, rightHalf};
 }
+
+
 
 
 }
