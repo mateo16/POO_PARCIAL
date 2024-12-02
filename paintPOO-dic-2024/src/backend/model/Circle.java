@@ -3,7 +3,11 @@ package backend.model;
 public class Circle extends Ellipse {
 
     public Circle(Point centerPoint, double radius) {
-        super(centerPoint, radius * 2, radius * 2);
+        super(ShadowType.NINGUNA, centerPoint, radius * 2, radius * 2);
+    }
+
+    public Circle(ShadowType shadowType, Point centerPoint, double radius) {
+        super(shadowType, centerPoint, radius * 2, radius * 2);
     }
 
     public double getRadius(){

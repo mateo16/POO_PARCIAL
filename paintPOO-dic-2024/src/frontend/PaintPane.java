@@ -134,20 +134,21 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			Figure newFigure = null;
+			ShadowType shadowType = getShadowType();
 			if(rectangleButton.isSelected()) {
-				newFigure = new Rectangle(startPoint, endPoint);
+				newFigure = new Rectangle(shadowType, startPoint, endPoint);
 			}
 			else if(circleButton.isSelected()) {
 				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Circle(startPoint, circleRadius);
+				newFigure = new Circle(shadowType, startPoint, circleRadius);
 			} else if(squareButton.isSelected()) {
 				double size = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Square(startPoint, size);
+				newFigure = new Square(shadowType, startPoint, size);
 			} else if(ellipseButton.isSelected()) {
 				Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
 				double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
 				double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
-				newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis);
+				newFigure = new Ellipse(shadowType, centerPoint, sMayorAxis, sMinorAxis);
 			} else {
 				return ;
 			}
@@ -238,6 +239,23 @@ public class PaintPane extends BorderPane {
 		setRight(canvas);
 	}
 
+	ShadowType getShadowType() {
+		String selectedValue = shadowChoiceBox.getValue();
+		switch (selectedValue) {
+			case "Simple":
+				return ShadowType.SIMPLE;
+			case "Coloreada":
+				return ShadowType.COLOREADA;
+			case "Simple Inversa":
+				return ShadowType.INVSIMPLE;
+			case "Coloreada Inversa":
+				return ShadowType.INVCOLOREADA;
+			case "Ninguna":
+			default:
+				return ShadowType.NINGUNA;
+		}
+	}
+
 	void drawFigure(Figure figure, double offset){
 		if(figure instanceof Rectangle) {
 			Rectangle rectangle = (Rectangle) figure;
@@ -293,7 +311,7 @@ public class PaintPane extends BorderPane {
 
     private void divideSelectedFigure() {
         if (selectedFigure != null) {
-            Figure[] dividedFigures = selectedFigure.divide();  // No offset here
+            Figure[] dividedFigures = selectedFigure.divide();
             for (Figure dividedFigure : dividedFigures) {
                 canvasState.addFigure(dividedFigure);
             }
@@ -306,8 +324,13 @@ public class PaintPane extends BorderPane {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
 			gc.setStroke(Color.TRANSPARENT);
-			gc.setFill(Color.GRAY);
-			drawFigure(figure, 10.0);
+			if(figure.getShadowType().getColored()){
+				gc.setFill(figureColorMap.get(figure).darker());
+			}else{
+				gc.setFill(Color.GRAY);
+			}
+			
+			drawFigure(figure, figure.getShadowType().getOffset());
 			
 			if(figure == selectedFigure) {
 				gc.setStroke(Color.RED);

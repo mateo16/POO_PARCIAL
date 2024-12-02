@@ -3,7 +3,11 @@ package backend.model;
 public class Square extends Rectangle{
 
     public Square(Point topLeft, double size) {
-        super(topLeft,new Point(topLeft.x + size, topLeft.y + size));
+        super(ShadowType.NINGUNA, topLeft,new Point(topLeft.x + size, topLeft.y + size));
+    }
+
+    public Square(ShadowType shadowType, Point topLeft, double size) {
+        super(shadowType, topLeft,new Point(topLeft.x + size, topLeft.y + size));
     }
 
     @Override

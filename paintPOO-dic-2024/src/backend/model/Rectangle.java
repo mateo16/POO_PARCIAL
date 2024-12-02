@@ -5,6 +5,13 @@ public class Rectangle extends Figure {
     protected Point topLeft, bottomRight;
 
     public Rectangle(Point topLeft, Point bottomRight) {
+        super(ShadowType.NINGUNA);
+        this.topLeft = topLeft;
+        this.bottomRight = bottomRight;
+    }
+
+    public Rectangle(ShadowType shadowType, Point topLeft, Point bottomRight) {
+        super(shadowType);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }

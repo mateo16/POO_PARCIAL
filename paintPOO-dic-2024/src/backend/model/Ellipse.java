@@ -2,10 +2,18 @@ package backend.model;
 
 public class Ellipse extends Figure {
 
-    protected  Point centerPoint;
-    protected  double sMayorAxis, sMinorAxis;
+    protected Point centerPoint;
+    protected double sMayorAxis, sMinorAxis;
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
+        super(ShadowType.NINGUNA);
+        this.centerPoint = centerPoint;
+        this.sMayorAxis = sMayorAxis;
+        this.sMinorAxis = sMinorAxis;
+    }
+
+    public Ellipse(ShadowType shadowType, Point centerPoint, double sMayorAxis, double sMinorAxis) {
+        super(shadowType);
         this.centerPoint = centerPoint;
         this.sMayorAxis = sMayorAxis;
         this.sMinorAxis = sMinorAxis;
