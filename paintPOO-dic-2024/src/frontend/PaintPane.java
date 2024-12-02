@@ -81,6 +81,8 @@ public class PaintPane extends BorderPane {
 	// Colores de relleno de cada figura
 	Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
 
+	Figure figureCopyFormat = null;
+
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
@@ -124,6 +126,7 @@ public class PaintPane extends BorderPane {
         flipVerButton.setOnAction(event -> flipVertical());
         duplicateButton.setOnAction(event -> duplicateSelectedFigure());
         divideButton.setOnAction(event -> divideSelectedFigure());
+		copiarFmtButton.setOnAction(event -> copyFigureFormat());
 
         
 
@@ -193,6 +196,14 @@ public class PaintPane extends BorderPane {
 						label.append(figure.toString());
 					}
 				}
+
+				if(figureCopyFormat != null && selectedFigure != null){
+					selectedFigure.setShadowType(figureCopyFormat.getShadowType());
+					selectedFigure.setBiselado(figureCopyFormat.getBiselado());
+					figureColorMap.put(selectedFigure, figureColorMap.get(figureCopyFormat));
+					figureCopyFormat = null;
+				}
+
 				if (found) {
 					statusPane.updateStatus(label.toString());
 				} else {
@@ -299,6 +310,10 @@ public class PaintPane extends BorderPane {
             }
             redrawCanvas();
         }
+    }
+
+	private void copyFigureFormat() {
+		figureCopyFormat = selectedFigure;
     }
     
 	void drawFigure(Figure figure, double offset){

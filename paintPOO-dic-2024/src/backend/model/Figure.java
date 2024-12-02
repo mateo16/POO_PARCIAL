@@ -17,6 +17,14 @@ public abstract class Figure {
         return biselado;
     }
 
+    public void setShadowType(ShadowType shadowType){
+        this.shadowType = shadowType;
+    }
+
+    public void setBiselado(Boolean biselado){
+        this.biselado = biselado;
+    }
+
     public abstract void rotate();
 
     public abstract void flipHorizontal();
