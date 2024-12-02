@@ -3,6 +3,7 @@ package frontend;
 import backend.CanvasState;
 import backend.model.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,12 +13,19 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.ArcType;
+import javafx.util.Pair;
 import javafx.scene.control.Label; 
 import javafx.scene.control.ChoiceBox;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.RadioButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,12 +63,23 @@ public class PaintPane extends BorderPane {
 	ColorPicker secondaryfillColorPicker = new ColorPicker(defaultFillColor);
 	Button copiarFmtButton = new Button("Copiar Fmt.");
 
+	Label actionsLabel = new Label("Acciones");
 
 	Button turnRightButton = new Button("Girar D");
     Button flipHorButton = new Button("Voltear H");
     Button flipVerButton = new Button("Voltear V");
     Button duplicateButton = new Button("Duplicar");
     Button divideButton = new Button("Dividir");
+
+	Button FrontButton = new Button("Traer al Frente");
+    Button BackButton = new Button("Enviar al Fondo");
+	Label layersLabel = new Label("Capas");
+	String layerStrings[] = { "Capa 1", "Capa 2", "Capa 3" };
+	ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerStrings));
+    RadioButton showButton = new RadioButton("Mostrar");
+    RadioButton hideButton = new RadioButton("Ocultar");
+    Button addLayerButton = new Button("Agregar Capa");
+	Button deleteLayerButton = new Button("Eliminar Capa");
 
 	// Dibujar una figura
 	Point startPoint;
@@ -72,7 +91,9 @@ public class PaintPane extends BorderPane {
 	StatusPane statusPane;
 
 	// Colores de relleno de cada figura
-	Map<Figure, Color> figureColorMap = new HashMap<>();
+	Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
+
+	Figure figureCopyFormat = null;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
@@ -84,6 +105,8 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
+
+		// Left-side buttons
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
 		buttonsBox.getChildren().addAll(formatLabel, shadowChoiceBox, biseladoCheckBox, fillColorPicker, secondaryfillColorPicker, copiarFmtButton);
@@ -95,22 +118,37 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
 
+		// Right-side buttons
 		Button[] ManipulationArr = {turnRightButton, flipHorButton, flipVerButton, duplicateButton, divideButton};
         for (Button manip : ManipulationArr) {
             manip.setMinWidth(90);
             manip.setCursor(Cursor.HAND);
         }
 
-        // Arrange buttons vertically
         VBox buttonsManipulationBox = new VBox(10);
+		buttonsManipulationBox.getChildren().add(actionsLabel);
         buttonsManipulationBox.getChildren().addAll(ManipulationArr);
-        buttonsManipulationBox.getChildren().add(fillColorPicker);
         buttonsManipulationBox.setPadding(new Insets(5));
         buttonsManipulationBox.setStyle("-fx-background-color: #999");
         buttonsManipulationBox.setPrefWidth(100);
-		HBox layout = new HBox();
-		layout.getChildren().addAll(buttonsManipulationBox, canvas);
-		setCenter(layout);
+
+		// Top buttons
+		Button[] layerButtons = {FrontButton, BackButton, addLayerButton, deleteLayerButton};
+		for (Button layerButton : layerButtons) {
+			layerButton.setMinWidth(90);
+			layerButton.setCursor(Cursor.HAND);
+		}
+
+		ToggleGroup visibilityGroup = new ToggleGroup();
+		showButton.setToggleGroup(visibilityGroup);
+		hideButton.setToggleGroup(visibilityGroup);
+	
+		HBox layerControlsBox = new HBox(10);
+		layerControlsBox.getChildren().addAll(FrontButton, BackButton, layersLabel, layersChoiceBox, showButton, hideButton, addLayerButton, deleteLayerButton);
+		layersChoiceBox.setValue(layerStrings[0]);
+		layerControlsBox.setPadding(new Insets(5));
+		layerControlsBox.setAlignment(Pos.CENTER);
+		layerControlsBox.setStyle("-fx-background-color: #999");
 
         // Handle button actions
         turnRightButton.setOnAction(event -> rotateSelectedFigure());
@@ -118,6 +156,7 @@ public class PaintPane extends BorderPane {
         flipVerButton.setOnAction(event -> flipVertical());
         duplicateButton.setOnAction(event -> duplicateSelectedFigure());
         divideButton.setOnAction(event -> divideSelectedFigure());
+		copiarFmtButton.setOnAction(event -> copyFigureFormat());
 
         
 
@@ -134,24 +173,25 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			Figure newFigure = null;
+			ShadowType shadowType = getShadowType();
 			if(rectangleButton.isSelected()) {
-				newFigure = new Rectangle(startPoint, endPoint);
+				newFigure = new Rectangle(shadowType, biseladoCheckBox.isSelected(), startPoint, endPoint);
 			}
 			else if(circleButton.isSelected()) {
 				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Circle(startPoint, circleRadius);
+				newFigure = new Circle(shadowType, biseladoCheckBox.isSelected(), startPoint, circleRadius);
 			} else if(squareButton.isSelected()) {
 				double size = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Square(startPoint, size);
+				newFigure = new Square(shadowType, biseladoCheckBox.isSelected(), startPoint, size);
 			} else if(ellipseButton.isSelected()) {
 				Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
 				double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
 				double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
-				newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis);
+				newFigure = new Ellipse(shadowType, biseladoCheckBox.isSelected(), centerPoint, sMayorAxis, sMinorAxis);
 			} else {
 				return ;
 			}
-			figureColorMap.put(newFigure, fillColorPicker.getValue());
+			figureColorMap.put(newFigure, new Pair<>(fillColorPicker.getValue(), secondaryfillColorPicker.getValue()));
 			canvasState.addFigure(newFigure);
 			startPoint = null;
 			redrawCanvas();
@@ -186,6 +226,14 @@ public class PaintPane extends BorderPane {
 						label.append(figure.toString());
 					}
 				}
+
+				if(figureCopyFormat != null && selectedFigure != null){
+					selectedFigure.setShadowType(figureCopyFormat.getShadowType());
+					selectedFigure.setBiselado(figureCopyFormat.getBiselado());
+					figureColorMap.put(selectedFigure, figureColorMap.get(figureCopyFormat));
+					figureCopyFormat = null;
+				}
+
 				if (found) {
 					statusPane.updateStatus(label.toString());
 				} else {
@@ -235,33 +283,29 @@ public class PaintPane extends BorderPane {
 		});
 
 		setLeft(buttonsBox);
-		setRight(canvas);
+		setCenter(canvas);
+		setRight(buttonsManipulationBox);
+		setTop(layerControlsBox);
+		setBottom(statusPane);
 	}
 
-	void drawFigure(Figure figure, double offset){
-		if(figure instanceof Rectangle) {
-			Rectangle rectangle = (Rectangle) figure;
-			gc.fillRect(rectangle.getTopLeft().getX() + offset, rectangle.getTopLeft().getY() + offset,
-					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-			gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX() + offset), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY() + offset));
-		} else if(figure instanceof Circle) {
-			Circle circle = (Circle) figure;
-			double diameter = circle.getRadius() * 2;
-			gc.fillOval(circle.getCenterPoint().getX() - circle.getRadius() + offset, circle.getCenterPoint().getY() - circle.getRadius() + offset, diameter, diameter);
-			gc.strokeOval(circle.getCenterPoint().getX() - circle.getRadius() + offset, circle.getCenterPoint().getY() - circle.getRadius() + offset, diameter, diameter);
-		} else if(figure instanceof Square) {
-			Square square = (Square) figure;
-			gc.fillRect(square.getTopLeft().getX() + offset, square.getTopLeft().getY() + offset,
-					Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-			gc.strokeRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-					Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-		} else if(figure instanceof Ellipse) {
-			Ellipse ellipse = (Ellipse) figure;
-			gc.strokeOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2) + offset, ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2) + offset, ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-			gc.fillOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2) + offset, ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2) + offset, ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
+	ShadowType getShadowType() {
+		String selectedValue = shadowChoiceBox.getValue();
+		switch (selectedValue) {
+			case "Simple":
+				return ShadowType.SIMPLE;
+			case "Coloreada":
+				return ShadowType.COLOREADA;
+			case "Simple Inversa":
+				return ShadowType.INVSIMPLE;
+			case "Coloreada Inversa":
+				return ShadowType.INVCOLOREADA;
+			case "Ninguna":
+			default:
+				return ShadowType.NINGUNA;
 		}
 	}
+
 	private void rotateSelectedFigure() {
         if (selectedFigure != null) {
             selectedFigure.rotate(); 
@@ -293,28 +337,106 @@ public class PaintPane extends BorderPane {
 
     private void divideSelectedFigure() {
         if (selectedFigure != null) {
-            Figure[] dividedFigures = selectedFigure.divide();  // No offset here
+            Figure[] dividedFigures = selectedFigure.divide();
             for (Figure dividedFigure : dividedFigures) {
                 canvasState.addFigure(dividedFigure);
             }
             redrawCanvas();
         }
     }
+
+	private void copyFigureFormat() {
+		figureCopyFormat = selectedFigure;
+    }
     
+	void drawFigure(Figure figure, double offset){
+		
+		if(figure instanceof Rectangle) {
+			Rectangle rectangle = (Rectangle) figure;
+			gc.fillRect(rectangle.getTopLeft().getX() + offset, rectangle.getTopLeft().getY() + offset,
+					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
+		} else if(figure instanceof Ellipse) {
+			Ellipse ellipse = (Ellipse) figure;
+			gc.fillOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2) + offset, ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2) + offset, ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
+		}
+	}
+
+	void drawBorder(Figure figure){
+		Color chosenColor;
+		if(figure == selectedFigure) {
+			chosenColor = Color.RED;
+		} else {
+			chosenColor = lineColor;
+		}
+
+		if(figure instanceof Rectangle) {
+			Rectangle rectangle = (Rectangle) figure;
+			if(figure.getBiselado()){
+				double x = rectangle.getTopLeft().getX();
+				double y = rectangle.getTopLeft().getY();
+				double width = Math.abs(x - rectangle.getBottomRight().getX());
+				double height = Math.abs(y - rectangle.getBottomRight().getY());
+				gc.setLineWidth(10);
+				gc.setStroke(Color.LIGHTGRAY);
+				gc.strokeLine(x, y, x + width, y);
+				gc.strokeLine(x, y, x, y + height);
+				gc.setStroke(Color.BLACK);
+				gc.strokeLine(x + width, y, x + width, y + height);
+				gc.strokeLine(x, y + height, x + width, y + height);
+			}
+			gc.setLineWidth(1);
+			gc.setStroke(chosenColor);
+			gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
+					Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
+			
+		} else if(figure instanceof Ellipse) {
+			Ellipse ellipse = (Ellipse) figure;
+			if(figure.getBiselado()){
+				double arcX = ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2);
+				double arcY = ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2);
+				gc.setLineWidth(10);
+				gc.setStroke(Color.LIGHTGRAY);
+				gc.strokeArc(arcX, arcY, ellipse.getsMayorAxis(), ellipse.getsMinorAxis(), 45, 180, ArcType.OPEN);
+				gc.setStroke(Color.BLACK);
+				gc.strokeArc(arcX, arcY, ellipse.getsMayorAxis(), ellipse.getsMinorAxis(), 225, 180, ArcType.OPEN);
+			}
+			gc.setLineWidth(1);
+			gc.setStroke(chosenColor);
+			gc.strokeOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());		
+		}
+	}
 
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
-			gc.setStroke(Color.TRANSPARENT);
-			gc.setFill(Color.GRAY);	
-			drawFigure(figure, 10.0);
+			Color firstFillColor = figureColorMap.get(figure).getKey();
+			Color secondFillColor = figureColorMap.get(figure).getValue();
 			
-			if(figure == selectedFigure) {
-				gc.setStroke(Color.RED);
-			} else {
-				gc.setStroke(lineColor);
+			if(figure.getShadowType().getColored()){
+				gc.setFill(firstFillColor.darker());
+			}else{
+				gc.setFill(Color.GRAY);
 			}
-			gc.setFill(figureColorMap.get(figure));
+			
+			drawFigure(figure, figure.getShadowType().getOffset());
+			
+
+			drawBorder(figure);
+
+			if(figure instanceof Rectangle) {
+				LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
+      			CycleMethod.NO_CYCLE,
+      			new Stop(0, firstFillColor),
+      			new Stop(1, secondFillColor));
+				gc.setFill(linearGradient);
+			}else{
+				RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+				CycleMethod.NO_CYCLE,
+				new Stop(0, firstFillColor),
+				new Stop(1, secondFillColor));
+			  gc.setFill(radialGradient);
+			}
+
 			drawFigure(figure, 0);
 
 		}
