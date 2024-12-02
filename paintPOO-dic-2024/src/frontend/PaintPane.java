@@ -3,6 +3,7 @@ package frontend;
 import backend.CanvasState;
 import backend.model.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,7 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import javafx.util.Pair;
+import javafx.scene.control.RadioButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,12 +63,21 @@ public class PaintPane extends BorderPane {
 	ColorPicker secondaryfillColorPicker = new ColorPicker(defaultFillColor);
 	Button copiarFmtButton = new Button("Copiar Fmt.");
 
+	Label actionsLabel = new Label("Acciones");
 
 	Button turnRightButton = new Button("Girar D");
     Button flipHorButton = new Button("Voltear H");
     Button flipVerButton = new Button("Voltear V");
     Button duplicateButton = new Button("Duplicar");
     Button divideButton = new Button("Dividir");
+
+	Button FrontButton = new Button("Traer al Frente");
+    Button BackButton = new Button("Enviar al Fondo");
+	Label layersLabel = new Label("Capas");
+    RadioButton showButton = new RadioButton("Mostrar");
+    RadioButton hideButton = new RadioButton("Ocultar");
+    Button addLayerButton = new Button("Agregar Capa");
+	Button deleteLayerButton = new Button("Eliminar Capa");
 
 	// Dibujar una figura
 	Point startPoint;
@@ -93,6 +103,8 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
+
+		// Left-side buttons
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
 		buttonsBox.getChildren().addAll(formatLabel, shadowChoiceBox, biseladoCheckBox, fillColorPicker, secondaryfillColorPicker, copiarFmtButton);
@@ -104,21 +116,32 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
 
+		// Right-side buttons
 		Button[] ManipulationArr = {turnRightButton, flipHorButton, flipVerButton, duplicateButton, divideButton};
         for (Button manip : ManipulationArr) {
             manip.setMinWidth(90);
             manip.setCursor(Cursor.HAND);
         }
 
-        // Arrange buttons vertically
         VBox buttonsManipulationBox = new VBox(10);
+		buttonsManipulationBox.getChildren().add(actionsLabel);
         buttonsManipulationBox.getChildren().addAll(ManipulationArr);
         buttonsManipulationBox.setPadding(new Insets(5));
         buttonsManipulationBox.setStyle("-fx-background-color: #999");
         buttonsManipulationBox.setPrefWidth(100);
-		HBox layout = new HBox();
-		layout.getChildren().addAll(buttonsManipulationBox, canvas);
-		setCenter(layout);
+
+		// Top buttons
+		Button[] layerButtons = {FrontButton, BackButton, addLayerButton, deleteLayerButton};
+		for (Button layerButton : layerButtons) {
+			layerButton.setMinWidth(90);
+			layerButton.setCursor(Cursor.HAND);
+		}
+	
+		HBox layerControlsBox = new HBox(10);
+		layerControlsBox.getChildren().addAll(FrontButton, BackButton, layersLabel, showButton, hideButton, addLayerButton, deleteLayerButton);
+		layerControlsBox.setPadding(new Insets(5));
+		layerControlsBox.setAlignment(Pos.CENTER);
+		layerControlsBox.setStyle("-fx-background-color: #999");
 
         // Handle button actions
         turnRightButton.setOnAction(event -> rotateSelectedFigure());
@@ -253,7 +276,10 @@ public class PaintPane extends BorderPane {
 		});
 
 		setLeft(buttonsBox);
-		setRight(canvas);
+		setCenter(canvas);
+		setRight(buttonsManipulationBox);
+		setTop(layerControlsBox);
+		setBottom(statusPane);
 	}
 
 	ShadowType getShadowType() {
