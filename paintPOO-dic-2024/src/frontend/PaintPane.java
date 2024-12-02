@@ -74,6 +74,8 @@ public class PaintPane extends BorderPane {
 	Button FrontButton = new Button("Traer al Frente");
     Button BackButton = new Button("Enviar al Fondo");
 	Label layersLabel = new Label("Capas");
+	String layerStrings[] = { "Capa 1", "Capa 2", "Capa 3" };
+	ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerStrings));
     RadioButton showButton = new RadioButton("Mostrar");
     RadioButton hideButton = new RadioButton("Ocultar");
     Button addLayerButton = new Button("Agregar Capa");
@@ -136,9 +138,14 @@ public class PaintPane extends BorderPane {
 			layerButton.setMinWidth(90);
 			layerButton.setCursor(Cursor.HAND);
 		}
+
+		ToggleGroup visibilityGroup = new ToggleGroup();
+		showButton.setToggleGroup(visibilityGroup);
+		hideButton.setToggleGroup(visibilityGroup);
 	
 		HBox layerControlsBox = new HBox(10);
-		layerControlsBox.getChildren().addAll(FrontButton, BackButton, layersLabel, showButton, hideButton, addLayerButton, deleteLayerButton);
+		layerControlsBox.getChildren().addAll(FrontButton, BackButton, layersLabel, layersChoiceBox, showButton, hideButton, addLayerButton, deleteLayerButton);
+		layersChoiceBox.setValue(layerStrings[0]);
 		layerControlsBox.setPadding(new Insets(5));
 		layerControlsBox.setAlignment(Pos.CENTER);
 		layerControlsBox.setStyle("-fx-background-color: #999");
