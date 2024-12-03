@@ -26,6 +26,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.RadioButton;
+import org.w3c.dom.css.Rect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -313,7 +314,9 @@ public class PaintPane extends BorderPane {
 
 	private void rotateSelectedFigure() {
         if (selectedFigure != null) {
-            selectedFigure.rotate(); 
+            selectedFigure.rotate();
+			//Pair<Color, Color> colorPair = figureColorMap.get(selectedFigure);
+			//figureColorMap.put(selectedFigure, new Pair<>(colorPair.getValue(), colorPair.getKey()));
             redrawCanvas();
         }
     }
@@ -321,13 +324,25 @@ public class PaintPane extends BorderPane {
     private void flipHorizontal() {
         if (selectedFigure != null) {
             selectedFigure.flipHorizontal();
-            redrawCanvas();
+			if(selectedFigure instanceof Rectangle r) {
+				if (r.getAngle() == 0 || r.getAngle() == 180) {
+					Pair<Color, Color> colorPair = figureColorMap.get(selectedFigure);
+					figureColorMap.put(selectedFigure, new Pair<>(colorPair.getValue(), colorPair.getKey()));
+				}
+			}
+			redrawCanvas();
         }
     }
 
     private void flipVertical() {
         if (selectedFigure != null) {
             selectedFigure.flipVertical();
+			if(selectedFigure instanceof Rectangle r) {
+				if (r.getAngle() == 90 || r.getAngle() == 270) {
+					Pair<Color, Color> colorPair = figureColorMap.get(selectedFigure);
+					figureColorMap.put(selectedFigure, new Pair<>(colorPair.getValue(), colorPair.getKey()));
+				}
+			}
             redrawCanvas();
         }
     }
@@ -430,7 +445,13 @@ public class PaintPane extends BorderPane {
 			drawBorder(figure);
 
 			if(figure instanceof Rectangle) {
-				LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
+				double angleRadian = Math.toRadians(((Rectangle) figure).getAngle());
+				LinearGradient linearGradient = new LinearGradient(
+						0.5 - 0.5 * Math.cos(angleRadian),
+						0.5 - 0.5 * Math.sin(angleRadian),
+						0.5 + 0.5 * Math.cos(angleRadian),
+						0.5 + 0.5 * Math.sin(angleRadian),
+						true,
       			CycleMethod.NO_CYCLE,
       			new Stop(0, firstFillColor),
       			new Stop(1, secondFillColor));
