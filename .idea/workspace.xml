@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="16376284-e620-4218-b2be-eb999882825f" name="Changes" comment="" />
+    <list default="true" id="16376284-e620-4218-b2be-eb999882825f" name="Changes" comment="Impl punto 3.1 (traer al frente y enviar al fondo)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paintPOO-dic-2024/src/backend/model/Ellipse.java" beforeDir="false" afterPath="$PROJECT_DIR$/paintPOO-dic-2024/src/backend/model/Ellipse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paintPOO-dic-2024/src/backend/model/Rectangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/paintPOO-dic-2024/src/backend/model/Rectangle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paintPOO-dic-2024/src/frontend/PaintPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/paintPOO-dic-2024/src/frontend/PaintPane.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,15 +22,20 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2pi5M0LAEffJzREXeQN5uK8xKXN" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.AppLauncher.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "branch__FedeMate",
+    "last_opened_file_path": "C:/Users/-MSI-/Desktop/stuff/Facu/7moCuat-2024Q2/POO_FINAL/JavaFXTest/src/MyBrowser.java",
+    "node.js.selected.package.tslint": "(autodetect)",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2"
@@ -32,7 +45,7 @@
     <configuration name="AppLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="frontend.AppLauncher" />
       <module name="POO_PARCIAL" />
-      <option name="VM_PARAMETERS" value="--module-path $USER_HOME$/Downloads/javafx-sdk-22.0.2/lib --add-modules javafx.controls,javafx.fxml" />
+      <option name="VM_PARAMETERS" value="--module-path /Users/-MSI-/javafx-sdk-22.0.2/lib --add-modules=javafx.swt,javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web " />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="frontend.*" />
@@ -74,5 +87,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Impl punto 3.1 (traer al frente y enviar al fondo)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Impl punto 3.1 (traer al frente y enviar al fondo)" />
   </component>
 </project>
