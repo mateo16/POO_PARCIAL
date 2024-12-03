@@ -74,6 +74,8 @@ public void flipVertical() {
     @Override 
 public Figure duplicate(int offset) {
     return new Rectangle(
+            this.getShadowType(),
+        this.getBiselado(),
         new Point(topLeft.getX() + offset, topLeft.getY() + offset),
         new Point(bottomRight.getX() + offset, bottomRight.getY() + offset)
     );

@@ -372,13 +372,17 @@ public class PaintPane extends BorderPane {
     }
 
 	private void setFrontWrapper() {
-		canvasState.setFront(selectedFigure);
-		redrawCanvas();
+		if(selectedFigure != null) {
+			canvasState.setFront(selectedFigure);
+			redrawCanvas();
+		}
 	}
 
 	private void setBackWrapper() {
-		canvasState.setBack(selectedFigure);
-		redrawCanvas();
+		if(selectedFigure != null) {
+			canvasState.setBack(selectedFigure);
+			redrawCanvas();
+		}
 	}
     
 	void drawFigure(Figure figure, double offset){
