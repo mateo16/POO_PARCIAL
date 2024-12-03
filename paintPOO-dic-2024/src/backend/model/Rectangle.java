@@ -4,6 +4,8 @@ public class Rectangle extends Figure {
 
     protected Point topLeft, bottomRight;
 
+    protected double angle = 0;
+
     public Rectangle(Point topLeft, Point bottomRight) {
         super(ShadowType.NINGUNA,false);
         this.topLeft = topLeft;
@@ -24,6 +26,10 @@ public class Rectangle extends Figure {
         return bottomRight;
     }
 
+    public double getAngle() {
+        return angle;
+    }
+
     @Override
     public void rotate(){
         double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
@@ -42,6 +48,11 @@ public class Rectangle extends Figure {
         // Update rectangle points
         topLeft = new Point(newTopLeftX, newTopLeftY);
         bottomRight = new Point(newBottomRightX, newBottomRightY);
+
+        angle += 90;
+        if(angle == 360) {
+            angle = 0;
+        }
     }
 
     @Override
