@@ -158,8 +158,9 @@ public class PaintPane extends BorderPane {
         duplicateButton.setOnAction(event -> duplicateSelectedFigure());
         divideButton.setOnAction(event -> divideSelectedFigure());
 		copiarFmtButton.setOnAction(event -> copyFigureFormat());
+		FrontButton.setOnAction(event -> setFrontWrapper());
+		BackButton.setOnAction(event -> setBackWrapper());
 
-        
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
@@ -369,6 +370,16 @@ public class PaintPane extends BorderPane {
 	private void copyFigureFormat() {
 		figureCopyFormat = selectedFigure;
     }
+
+	private void setFrontWrapper() {
+		canvasState.setFront(selectedFigure);
+		redrawCanvas();
+	}
+
+	private void setBackWrapper() {
+		canvasState.setBack(selectedFigure);
+		redrawCanvas();
+	}
     
 	void drawFigure(Figure figure, double offset){
 		
