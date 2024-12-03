@@ -34,7 +34,7 @@ import javax.swing.text.LabelView;
 
 public class PaintPane extends BorderPane {
 
-	private final int DUPLICATION_OFFSET = 2;
+	private final int DUPLICATION_OFFSET = 10;
 
 	// BackEnd
 	CanvasState canvasState;
@@ -306,6 +306,11 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+	private void copyFigure(Figure f){
+		canvasState.addFigure(f);
+		figureColorMap.put(f, new Pair<>(figureColorMap.get(selectedFigure).getKey(), figureColorMap.get(selectedFigure).getValue()));
+	}
+
 	private void rotateSelectedFigure() {
         if (selectedFigure != null) {
             selectedFigure.rotate(); 
@@ -330,7 +335,7 @@ public class PaintPane extends BorderPane {
     private void duplicateSelectedFigure() {
         if (selectedFigure != null) {
             Figure duplicate = selectedFigure.duplicate(DUPLICATION_OFFSET); 
-            canvasState.addFigure(duplicate);
+            copyFigure(duplicate);
             redrawCanvas();
         }
     }
@@ -338,8 +343,9 @@ public class PaintPane extends BorderPane {
     private void divideSelectedFigure() {
         if (selectedFigure != null) {
             Figure[] dividedFigures = selectedFigure.divide();
+			canvasState.deleteFigure(selectedFigure);
             for (Figure dividedFigure : dividedFigures) {
-                canvasState.addFigure(dividedFigure);
+                copyFigure(dividedFigure);
             }
             redrawCanvas();
         }
