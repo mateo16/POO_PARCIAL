@@ -9,9 +9,6 @@ import java.util.List;
 
 public class CanvasState {
 
-
-    //private final List<Figure> list = new ArrayList<>();
-
     public CanvasState() {
          layers = new ArrayList<>();
          layers.add(new Layer());

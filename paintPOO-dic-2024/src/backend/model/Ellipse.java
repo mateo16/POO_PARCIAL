@@ -4,8 +4,8 @@ public class Ellipse extends Figure {
 
     protected Point centerPoint;
     protected double sMayorAxis, sMinorAxis;
-    private boolean isFlippedHorizontal = false; // Bandera para el flip horizontal
-    private boolean isFlippedVertical = false;   // Bandera para el flip vertical
+    private boolean isFlippedHorizontal = false; 
+    private boolean isFlippedVertical = false;   
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
         super(ShadowType.NINGUNA,false);
@@ -70,9 +70,6 @@ public class Ellipse extends Figure {
         isFlippedVertical = !isFlippedVertical;
     }
     
-    
-
-
     @Override
     public Figure duplicate(int offset) {
         Point newCenter = new Point(centerPoint.getX() + offset, centerPoint.getY() + offset);

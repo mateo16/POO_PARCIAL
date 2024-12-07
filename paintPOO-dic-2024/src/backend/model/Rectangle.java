@@ -35,17 +35,14 @@ public class Rectangle extends Figure {
         double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
         double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
     
-        // Calculate the width and height of the rectangle
         double width = Math.abs(bottomRight.getX() - topLeft.getX());
         double height = Math.abs(bottomRight.getY() - topLeft.getY());
     
-        // Swap the width and height for rotation
         double newTopLeftX = centerX - height / 2;
         double newTopLeftY = centerY - width / 2;
         double newBottomRightX = centerX + height / 2;
         double newBottomRightY = centerY + width / 2;
     
-        // Update rectangle points
         topLeft = new Point(newTopLeftX, newTopLeftY);
         bottomRight = new Point(newBottomRightX, newBottomRightY);
 
