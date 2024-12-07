@@ -389,7 +389,9 @@ public class PaintPane extends BorderPane {
             for (Figure dividedFigure : dividedFigures) {
                 copyFigure(dividedFigure);
             }
+			selectedFigure = null; 
             redrawCanvas();
+
         }
     }
 
