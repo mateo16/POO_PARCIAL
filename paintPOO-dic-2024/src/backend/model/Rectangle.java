@@ -88,9 +88,8 @@ public Figure[] divide() {
     double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
     double height = bottomRight.getY() - topLeft.getY(); 
 
-    
-    Rectangle leftHalf = new Rectangle(new Point(topLeft.getX(), topLeft.getY()+ height/4),  new Point(centerX, centerY+ height/4));
-    Rectangle rightHalf = new Rectangle(new Point(centerX, centerY - height/4),  new Point(bottomRight.getX(), bottomRight.getY() - height/4));
+    Rectangle leftHalf = new Rectangle(this.getShadowType(), this.getBiselado(), new Point(topLeft.getX(), topLeft.getY()+ height/4),  new Point(centerX, centerY+ height/4));
+    Rectangle rightHalf = new Rectangle(this.getShadowType(), this.getBiselado(), new Point(centerX, centerY - height/4),  new Point(bottomRight.getX(), bottomRight.getY() - height/4));
     
     return new Figure[]{leftHalf, rightHalf};
 }

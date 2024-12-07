@@ -80,30 +80,13 @@ public class Ellipse extends Figure {
     }
 
     @Override
-public Figure[] divide() {
-    // Calculate the new semi-major and semi-minor axes for the divided ellipses
-    double newSemiMajorAxis = sMayorAxis / 2;
-    double newSemiMinorAxis = sMinorAxis / 2;
+    public Figure[] divide() {
+        double newSemiMajorAxis = sMayorAxis / 2;
+        double newSemiMinorAxis = sMinorAxis / 2;
 
-    // Create the left ellipse
-    Ellipse leftHalf = new Ellipse(
-        new Point(centerPoint.getX() - newSemiMajorAxis / 2, centerPoint.getY()), // Adjust X leftward
-        newSemiMajorAxis,
-        newSemiMinorAxis
-    );
+        Ellipse leftHalf = new Ellipse(this.getShadowType(), this.getBiselado(), new Point(centerPoint.getX() - newSemiMajorAxis / 2, centerPoint.getY()), newSemiMajorAxis, newSemiMinorAxis);
+        Ellipse rightHalf = new Ellipse(this.getShadowType(), this.getBiselado(), new Point(centerPoint.getX() + newSemiMajorAxis / 2, centerPoint.getY()), newSemiMajorAxis, newSemiMinorAxis);
 
-    // Create the right ellipse
-    Ellipse rightHalf = new Ellipse(
-        new Point(centerPoint.getX() + newSemiMajorAxis / 2, centerPoint.getY()), // Adjust X rightward
-        newSemiMajorAxis,
-        newSemiMinorAxis
-    );
-
-    // Return the two new ellipses
-    return new Figure[]{leftHalf, rightHalf};
-}
-
-
-
-
+        return new Figure[]{leftHalf, rightHalf};
+    }
 }
