@@ -1,6 +1,7 @@
 package backend;
 
 import backend.model.Figure;
+import backend.model.ShadowType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +78,14 @@ public class CanvasState {
                 l.setShown(false);
             }
         }
+    }
+
+    public void changeShadow(Figure figure, ShadowType shadow) {
+        figure.getLayer().changeShadow(figure, shadow);
+    }
+
+    public void changeBiselado(Figure figure, boolean biselado) {
+        figure.getLayer().changeBiselado(figure, biselado);
     }
 
 }

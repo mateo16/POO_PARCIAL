@@ -1,6 +1,7 @@
 package backend;
 
 import backend.model.Figure;
+import backend.model.ShadowType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class Layer {
     }
 
     public void addFigure(Figure figure) {
+        figure.setLayer(this);
         figures.add(figure);
     }
 
@@ -51,6 +53,21 @@ public class Layer {
     public void setBack(Figure figure) {
         deleteFigure(figure);
         figures.addFirst(figure);
+    }
+
+    public void changeShadow(Figure figure, ShadowType shadow) {
+        for(Figure f : figures) {
+            if(f == figure) {
+                f.setShadowType(shadow);
+            }
+        }
+    }
+    public void changeBiselado(Figure figure, boolean biselado) {
+        for(Figure f : figures) {
+            if(f == figure) {
+                f.setBiselado(biselado);
+            }
+        }
     }
 
     @Override

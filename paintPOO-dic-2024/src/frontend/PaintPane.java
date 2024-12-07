@@ -181,6 +181,11 @@ public class PaintPane extends BorderPane {
 		deleteLayerButton.setOnAction(event -> deleteLayer());
 		showButton.setOnAction(event -> showLayer());
 		hideButton.setOnAction(event -> hideLayer());
+		shadowChoiceBox.setOnAction(event -> changeShadow());
+		biseladoCheckBox.setOnAction(event -> changeBiselado());
+		fillColorPicker.setOnAction(event -> changeFillColor());
+		secondaryfillColorPicker.setOnAction(event -> changeSecondaryFillColor());
+
 
 
 		canvas.setOnMousePressed(event -> {
@@ -434,6 +439,32 @@ public class PaintPane extends BorderPane {
 	private void hideLayer() {
 		canvasState.hideLayer(layersChoiceBox.getValue());
 
+		redrawCanvas();
+	}
+
+	private void changeShadow() {
+		if(selectionButton.isSelected() && selectedFigure != null) {
+			canvasState.changeShadow(selectedFigure, getShadowType());
+		}
+		redrawCanvas();
+	}
+	private void changeBiselado() {
+		if(selectionButton.isSelected() && selectedFigure != null) {
+			canvasState.changeBiselado(selectedFigure, biseladoCheckBox.isSelected());
+		}
+		redrawCanvas();
+
+	}
+	private void changeFillColor() {
+		if(selectionButton.isSelected() && selectedFigure != null) {
+			figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker.getValue(), secondaryfillColorPicker.getValue()));
+		}
+		redrawCanvas();
+	}
+	private void changeSecondaryFillColor() {
+		if(selectionButton.isSelected() && selectedFigure != null) {
+			figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker.getValue(), secondaryfillColorPicker.getValue()));
+		}
 		redrawCanvas();
 	}
     
