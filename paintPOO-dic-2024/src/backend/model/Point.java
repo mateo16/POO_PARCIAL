@@ -2,7 +2,7 @@ package backend.model;
 
 public class Point {
 
-    public double x, y;
+    private double x, y;
 
     public Point(double x, double y) {
         this.x = x;
@@ -16,6 +16,15 @@ public class Point {
     public double getY() {
         return y;
     }
+
+    public void addX(double x){
+        this.x += x;
+    }
+
+    public void addY(double y){
+        this.y += y;
+    }
+
 
     @Override
     public String toString() {

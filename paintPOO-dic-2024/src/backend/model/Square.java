@@ -4,7 +4,7 @@ public class Square extends Rectangle{
 
 
     public Square(ShadowType shadowType, Boolean biselado, Point topLeft, double size) {
-        super(shadowType, biselado, topLeft,new Point(topLeft.x + size, topLeft.y + size));
+        super(shadowType, biselado, topLeft,new Point(topLeft.getX() + size, topLeft.getY() + size));
     }
 
     @Override
