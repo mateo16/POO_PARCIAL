@@ -83,7 +83,8 @@ public class LayerPane extends BorderPane {
 				hideButton.fire();
 			}
 		});
-
+		
+		// Handle button actions
 		FrontButton.setOnAction(event -> setFrontWrapper());
 		BackButton.setOnAction(event -> setBackWrapper());
 		addLayerButton.setOnAction(event -> addLayer());

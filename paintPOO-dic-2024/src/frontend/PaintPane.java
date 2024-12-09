@@ -35,8 +35,6 @@ import javax.swing.text.LabelView;
 
 public class PaintPane extends BorderPane {
 
-	private final double DUPLICATION_OFFSET = 10.0;
-
 	// BackEnd
 	private CanvasState canvasState;
 
@@ -64,14 +62,6 @@ public class PaintPane extends BorderPane {
 	ColorPicker secondaryfillColorPicker = new ColorPicker(defaultFillColor);
 	Button copiarFmtButton = new Button("Copiar Fmt.");
 
-	Label actionsLabel = new Label("Acciones");
-
-	Button turnRightButton = new Button("Girar D");
-    Button flipHorButton = new Button("Voltear H");
-    Button flipVerButton = new Button("Voltear V");
-    Button duplicateButton = new Button("Duplicar");
-    Button divideButton = new Button("Dividir");
-
 	// Dibujar una figura
 	Point startPoint;
 
@@ -84,7 +74,7 @@ public class PaintPane extends BorderPane {
 	StatusPane statusPane;
 
 	// Colores de relleno de cada figura
-	Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
+	private Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
 
 	Figure figureCopyFormat = null;
 
@@ -109,35 +99,14 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
-		gc.setLineWidth(1);
-
-		// Right-side buttons
-		Button[] ManipulationArr = {turnRightButton, flipHorButton, flipVerButton, duplicateButton, divideButton};
-        for (Button manip : ManipulationArr) {
-            manip.setMinWidth(90);
-            manip.setCursor(Cursor.HAND);
-        }
-
-        VBox buttonsManipulationBox = new VBox(10);
-		buttonsManipulationBox.getChildren().add(actionsLabel);
-        buttonsManipulationBox.getChildren().addAll(ManipulationArr);
-        buttonsManipulationBox.setPadding(new Insets(5));
-        buttonsManipulationBox.setStyle("-fx-background-color: #999");
-        buttonsManipulationBox.setPrefWidth(100);		
+		gc.setLineWidth(1);	
 
         // Handle button actions
-        turnRightButton.setOnAction(event -> rotateSelectedFigure());
-        flipHorButton.setOnAction(event -> flipHorizontal());
-        flipVerButton.setOnAction(event -> flipVertical());
-        duplicateButton.setOnAction(event -> duplicateSelectedFigure());
-        divideButton.setOnAction(event -> divideSelectedFigure());
 		copiarFmtButton.setOnAction(event -> copyFigureFormat());
 		shadowChoiceBox.setOnAction(event -> changeShadow());
 		biseladoCheckBox.setOnAction(event -> changeBiselado());
 		fillColorPicker.setOnAction(event -> changeFillColor());
 		secondaryfillColorPicker.setOnAction(event -> changeSecondaryFillColor());
-
-
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
@@ -253,8 +222,6 @@ public class PaintPane extends BorderPane {
 
 		setLeft(buttonsBox);
 		setCenter(canvas);
-		setRight(buttonsManipulationBox);
-		setBottom(statusPane);
 	}
 
 	ShadowType getShadowType() {
@@ -274,6 +241,10 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+	public void setSelectedFigure(Figure selectedFigure){
+		this.selectedFigure = selectedFigure;
+	}
+
 	public void setSelectedLayer(Layer selectedLayer){
 		this.selectedLayer = selectedLayer;
 	}
@@ -282,66 +253,17 @@ public class PaintPane extends BorderPane {
 		return selectedFigure;
 	}
 
-	private void copyFigure(Figure f){
-		canvasState.addFigure(selectedLayer, f);
-		figureColorMap.put(f, new Pair<>(figureColorMap.get(selectedFigure).getKey(), figureColorMap.get(selectedFigure).getValue()));
+	public Layer getSelectedLayer(){
+		return selectedLayer;
 	}
 
-	private void rotateSelectedFigure() {
-        if (selectedFigure != null) {
-            selectedFigure.rotate();
-			//Pair<Color, Color> colorPair = figureColorMap.get(selectedFigure);
-			//figureColorMap.put(selectedFigure, new Pair<>(colorPair.getValue(), colorPair.getKey()));
-            redrawCanvas();
-        }
-    }
+	public Pair<Color, Color> colorMapGet(Figure figure){
+		return figureColorMap.get(figure);
+	}
 
-    private void flipHorizontal() {
-        if (selectedFigure != null) {
-            selectedFigure.flipHorizontal();
-			if(selectedFigure instanceof Rectangle r) {
-				if (r.getAngle() == 0 || r.getAngle() == 180) {
-					Pair<Color, Color> colorPair = figureColorMap.get(selectedFigure);
-					figureColorMap.put(selectedFigure, new Pair<>(colorPair.getValue(), colorPair.getKey()));
-				}
-			}
-			redrawCanvas();
-        }
-    }
-
-    private void flipVertical() {
-        if (selectedFigure != null) {
-            selectedFigure.flipVertical();
-			if(selectedFigure instanceof Rectangle r) {
-				if (r.getAngle() == 90 || r.getAngle() == 270) {
-					Pair<Color, Color> colorPair = figureColorMap.get(selectedFigure);
-					figureColorMap.put(selectedFigure, new Pair<>(colorPair.getValue(), colorPair.getKey()));
-				}
-			}
-            redrawCanvas();
-        }
-    }
-
-    private void duplicateSelectedFigure() {
-        if (selectedFigure != null) {
-            Figure duplicate = selectedFigure.duplicate(DUPLICATION_OFFSET); 
-            copyFigure(duplicate);
-            redrawCanvas();
-        }
-    }
-
-    private void divideSelectedFigure() {
-        if (selectedFigure != null) {
-            Figure[] dividedFigures = selectedFigure.divide();
-			canvasState.deleteFigure(selectedLayer, selectedFigure);
-            for (Figure dividedFigure : dividedFigures) {
-                copyFigure(dividedFigure);
-            }
-			selectedFigure = null; 
-            redrawCanvas();
-
-        }
-    }
+	public void colorMapPut(Figure figure,Pair<Color, Color> color){
+		figureColorMap.put(figure, color);
+	}
 
 	private void copyFigureFormat() {
 		figureCopyFormat = selectedFigure;
