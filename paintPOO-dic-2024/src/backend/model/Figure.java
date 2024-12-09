@@ -4,7 +4,7 @@ import backend.Layer;
 
 public abstract class Figure {
     private ShadowType shadowType;
-    private Boolean biselado;
+    private boolean biselado;
 
     private Layer layer;
 
@@ -29,7 +29,7 @@ public abstract class Figure {
         this.shadowType = shadowType;
     }
 
-    public void setBiselado(Boolean biselado){
+    public void setBiselado(boolean biselado){
         this.biselado = biselado;
     }
 

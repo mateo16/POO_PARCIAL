@@ -73,7 +73,7 @@ public class ActionsPane extends BorderPane{
     }
 
     private void copyFigure(Figure f){
-		canvasState.addFigure(paintPane.getSelectedLayer(), f);
+		paintPane.getSelectedLayer().addFigure(f);
 		paintPane.colorMapPut(f, new Pair<>(paintPane.colorMapGet(paintPane.getSelectedFigure()).getKey(), paintPane.colorMapGet(paintPane.getSelectedFigure()).getValue()));
 	}
 
@@ -121,7 +121,7 @@ public class ActionsPane extends BorderPane{
     private void divideSelectedFigure() {
         if (paintPane.getSelectedFigure() != null) {
             Figure[] dividedFigures = paintPane.getSelectedFigure().divide();
-			canvasState.deleteFigure(paintPane.getSelectedLayer(), paintPane.getSelectedFigure());
+			paintPane.getSelectedLayer().deleteFigure( paintPane.getSelectedFigure());
             for (Figure dividedFigure : dividedFigures) {
                 copyFigure(dividedFigure);
             }

@@ -102,14 +102,14 @@ public class LayerPane extends BorderPane {
 
 	private void setFrontWrapper() {
 		if(paintPane.getSelectedFigure() != null) {
-			canvasState.setFront(layersChoiceBox.getValue(), paintPane.getSelectedFigure());
+			layersChoiceBox.getValue().setFront(paintPane.getSelectedFigure());
 			paintPane.redrawCanvas();
 		}
 	}
 
 	private void setBackWrapper() {
 		if(paintPane.getSelectedFigure() != null) {
-			canvasState.setBack(layersChoiceBox.getValue(), paintPane.getSelectedFigure());
+			layersChoiceBox.getValue().setBack(paintPane.getSelectedFigure());
 			paintPane.redrawCanvas();
 		}
 	}

@@ -16,23 +16,6 @@ public class CanvasState {
 
     private ArrayList<Layer> layers;
 
-    public void addFigure(Layer layer, Figure figure) {
-        layer.addFigure(figure);
-    }
-
-    public void deleteFigure(Layer layer, Figure figure) {
-        layer.deleteFigure(figure);
-    }
-
-    public void setFront(Layer layer, Figure figure) {
-        layer.setFront(figure);
-    }
-
-    public void setBack(Layer layer, Figure figure) {
-        layer.setBack(figure);
-    }
-
-   
     public Iterable<Figure> figures(Layer layer) {
         return layer.getFigures();
     }

@@ -140,7 +140,7 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			figureColorMap.put(newFigure, new Pair<>(fillColorPicker.getValue(), secondaryfillColorPicker.getValue()));
-			canvasState.addFigure(selectedLayer, newFigure);
+			selectedLayer.addFigure(newFigure);
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -214,7 +214,7 @@ public class PaintPane extends BorderPane {
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				canvasState.deleteFigure(selectedLayer, selectedFigure);
+				selectedLayer.deleteFigure(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
