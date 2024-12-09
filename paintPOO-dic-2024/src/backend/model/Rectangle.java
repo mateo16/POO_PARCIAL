@@ -5,11 +5,15 @@ public class Rectangle extends Figure {
     protected Point topLeft, bottomRight;
 
     protected double angle = 0;
+    private boolean isFlippedHorizontal = false; 
+    private boolean isFlippedVertical = false;   
+    private Point centerPoint;
 
     public Rectangle(ShadowType shadowType, Boolean biselado, Point topLeft, Point bottomRight) {
         super(shadowType,biselado);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
+        updateCenterPoint(); 
     }
 
     public Point getTopLeft() {
@@ -24,43 +28,50 @@ public class Rectangle extends Figure {
         return angle;
     }
 
+    private void updateCenterPoint() {
+        centerPoint = new Point(
+            (topLeft.getX() + bottomRight.getX()) / 2,
+            (topLeft.getY() + bottomRight.getY()) / 2
+        );
+    }
+
+    private void updateCorners(double width, double height) {
+        topLeft = new Point(centerPoint.getX() - width / 2, centerPoint.getY() - height / 2);
+        bottomRight = new Point(centerPoint.getX() + width / 2, centerPoint.getY() + height / 2);
+    }
+
     @Override
-    public void rotate(){
-        double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
-        double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
-    
+    public void flipHorizontal() {
+        double width = Math.abs(bottomRight.getX() - topLeft.getX());
+        if (!isFlippedHorizontal) {
+            centerPoint = new Point(centerPoint.getX() + width, centerPoint.getY());
+        } else {
+            centerPoint = new Point(centerPoint.getX() - width, centerPoint.getY());
+        }
+        isFlippedHorizontal = !isFlippedHorizontal;
+        updateCorners(width, Math.abs(bottomRight.getY() - topLeft.getY()));
+    }
+
+    @Override
+    public void flipVertical() {
+        double height = Math.abs(bottomRight.getY() - topLeft.getY());
+        if (!isFlippedVertical) {
+            centerPoint = new Point(centerPoint.getX(), centerPoint.getY() + height);
+        } else {
+            centerPoint = new Point(centerPoint.getX(), centerPoint.getY() - height);
+        }
+        isFlippedVertical = !isFlippedVertical;
+        updateCorners(Math.abs(bottomRight.getX() - topLeft.getX()), height);
+    }
+
+    @Override
+    public void rotate() {
         double width = Math.abs(bottomRight.getX() - topLeft.getX());
         double height = Math.abs(bottomRight.getY() - topLeft.getY());
-    
-        double newTopLeftX = centerX - height / 2;
-        double newTopLeftY = centerY - width / 2;
-        double newBottomRightX = centerX + height / 2;
-        double newBottomRightY = centerY + width / 2;
-    
-        topLeft = new Point(newTopLeftX, newTopLeftY);
-        bottomRight = new Point(newBottomRightX, newBottomRightY);
-
-        angle += 90;
-        if(angle == 360) {
-            angle = 0;
-        }
+        updateCorners(height, width);
+        angle = (angle + 90) % 360;
     }
-
-    @Override
-    public void flipHorizontal(){
-        double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
-        topLeft = new Point(2 * centerX - topLeft.getX(), topLeft.getY());
-        bottomRight = new Point(2 * centerX - bottomRight.getX(), bottomRight.getY());
-    }
-
-    @Override
-public void flipVertical() {
-    double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
-    topLeft = new Point(topLeft.getX(), 2 * centerY - topLeft.getY());
-    bottomRight = new Point(bottomRight.getX(), 2 * centerY - bottomRight.getY());
-}
-
-    
+   
 
     @Override 
 public Figure duplicate(double offset) {
