@@ -71,33 +71,23 @@ public class Rectangle extends Figure {
         updateCorners(height, width);
         angle = (angle + 90) % 360;
     }
-   
 
     @Override 
-public Figure duplicate(double offset) {
-    return new Rectangle(
-            this.getShadowType(),
-        this.getBiselado(),
-        new Point(topLeft.getX() + offset, topLeft.getY() + offset),
-        new Point(bottomRight.getX() + offset, bottomRight.getY() + offset)
-    );
-}
+    public Figure duplicate(double offset) {
+        return new Rectangle(this.getShadowType(), this.getBiselado(), new Point(topLeft.getX() + offset, topLeft.getY() + offset), new Point(bottomRight.getX() + offset, bottomRight.getY() + offset));
+    }
 
+    @Override
+    public Figure[] divide() {
+        double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
+        double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
+        double height = bottomRight.getY() - topLeft.getY(); 
 
-@Override
-public Figure[] divide() {
-    double centerX = (topLeft.getX() + bottomRight.getX()) / 2;
-    double centerY = (topLeft.getY() + bottomRight.getY()) / 2;
-    double height = bottomRight.getY() - topLeft.getY(); 
-
-    Rectangle leftHalf = new Rectangle(this.getShadowType(), this.getBiselado(), new Point(topLeft.getX(), topLeft.getY()+ height/4),  new Point(centerX, centerY+ height/4));
-    Rectangle rightHalf = new Rectangle(this.getShadowType(), this.getBiselado(), new Point(centerX, centerY - height/4),  new Point(bottomRight.getX(), bottomRight.getY() - height/4));
+        Rectangle leftHalf = new Rectangle(this.getShadowType(), this.getBiselado(), new Point(topLeft.getX(), topLeft.getY()+ height/4),  new Point(centerX, centerY+ height/4));
+        Rectangle rightHalf = new Rectangle(this.getShadowType(), this.getBiselado(), new Point(centerX, centerY - height/4),  new Point(bottomRight.getX(), bottomRight.getY() - height/4));
     
-    return new Figure[]{leftHalf, rightHalf};
-}
-
-
-    
+        return new Figure[]{leftHalf, rightHalf};
+    }
 
     @Override
     public String toString() {
