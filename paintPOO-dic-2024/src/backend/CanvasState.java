@@ -1,10 +1,8 @@
 package backend;
 
 import backend.model.Figure;
-import backend.model.ShadowType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CanvasState {
@@ -59,30 +57,6 @@ public class CanvasState {
 
     public ArrayList<Layer> getLayers() {
         return new ArrayList<>(layers);
-    }
-
-    public void showLayer(Layer layer) {
-        for(Layer l : layers) {
-            if(layer == l) {
-                l.setShown(true);
-            }
-        }
-    }
-
-    public void hideLayer(Layer layer) {
-        for(Layer l : layers) {
-            if(layer == l) {
-                l.setShown(false);
-            }
-        }
-    }
-
-    public void changeShadow(Figure figure, ShadowType shadow) {
-        figure.getLayer().changeShadow(figure, shadow);
-    }
-
-    public void changeBiselado(Figure figure, boolean biselado) {
-        figure.getLayer().changeBiselado(figure, biselado);
     }
 
 }

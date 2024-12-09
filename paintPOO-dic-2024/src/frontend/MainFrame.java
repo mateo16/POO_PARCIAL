@@ -15,6 +15,10 @@ public class MainFrame extends VBox {
 
         // Create the PaintPane for drawing figures (this is the canvas)
         PaintPane paintPane = new PaintPane(canvasState, statusPane);
+        
+        // Create the LayerPane
+        LayerPane layerPane = new LayerPane(canvasState, paintPane);
+        getChildren().add(layerPane); // Add the LayerPane to the layout
         getChildren().add(paintPane); // Add the PaintPane to the layout
 
         // Optionally, set layout properties for the VBox

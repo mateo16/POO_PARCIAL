@@ -7,13 +7,6 @@ public class Ellipse extends Figure {
     private boolean isFlippedHorizontal = false; 
     private boolean isFlippedVertical = false;   
 
-    public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
-        super(ShadowType.NINGUNA,false);
-        this.centerPoint = centerPoint;
-        this.sMayorAxis = sMayorAxis;
-        this.sMinorAxis = sMinorAxis;
-    }
-
     public Ellipse(ShadowType shadowType, Boolean biselado, Point centerPoint, double sMayorAxis, double sMinorAxis) {
         super(shadowType,biselado);
         this.centerPoint = centerPoint;
@@ -71,7 +64,7 @@ public class Ellipse extends Figure {
     }
     
     @Override
-    public Figure duplicate(int offset) {
+    public Figure duplicate(double offset) {
         Point newCenter = new Point(centerPoint.getX() + offset, centerPoint.getY() + offset);
         return new Ellipse(this.getShadowType(), this.getBiselado(), newCenter, sMayorAxis, sMinorAxis);
     }

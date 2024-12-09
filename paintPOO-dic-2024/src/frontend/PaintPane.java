@@ -35,10 +35,10 @@ import javax.swing.text.LabelView;
 
 public class PaintPane extends BorderPane {
 
-	private final int DUPLICATION_OFFSET = 10;
+	private final double DUPLICATION_OFFSET = 10.0;
 
 	// BackEnd
-	CanvasState canvasState;
+	private CanvasState canvasState;
 
 	// Canvas y relacionados
 	Canvas canvas = new Canvas(800, 600);
@@ -72,21 +72,13 @@ public class PaintPane extends BorderPane {
     Button duplicateButton = new Button("Duplicar");
     Button divideButton = new Button("Dividir");
 
-	Button FrontButton = new Button("Traer al Frente");
-    Button BackButton = new Button("Enviar al Fondo");
-	Label layersLabel = new Label("Capas");
-	//hacemos la choicebox vacia y luego agregamos las capas dinamicamente
-	ChoiceBox<Layer> layersChoiceBox = new ChoiceBox<>();
-    RadioButton showButton = new RadioButton("Mostrar");
-    RadioButton hideButton = new RadioButton("Ocultar");
-    Button addLayerButton = new Button("Agregar Capa");
-	Button deleteLayerButton = new Button("Eliminar Capa");
-
 	// Dibujar una figura
 	Point startPoint;
 
 	// Seleccionar una figura
-	Figure selectedFigure;
+	private Figure selectedFigure;
+
+	private Layer selectedLayer;
 
 	// StatusBar
 	StatusPane statusPane;
@@ -106,22 +98,6 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
-		//canvasState ya inicia con 3 capas, las agrego al choicebox
-		layersChoiceBox.getItems().addAll(FXCollections.observableArrayList(canvasState.getLayers()));
-		layersChoiceBox.setValue(canvasState.getLayers().getFirst());
-
-		//se muestra el estado de la primer capa al iniciar la aplicacion
-		//(luego se hace automaticamente)
-		showButton.fire();
-
-		//actualiza los botones de mostrar y ocultar segun el estado de la capa
-		layersChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldLayer, newLayer) -> {
-			if(newLayer.getShown()) {
-				showButton.fire();
-			} else {
-				hideButton.fire();
-			}
-		});
 
 		// Left-side buttons
 		VBox buttonsBox = new VBox(10);
@@ -147,26 +123,7 @@ public class PaintPane extends BorderPane {
         buttonsManipulationBox.getChildren().addAll(ManipulationArr);
         buttonsManipulationBox.setPadding(new Insets(5));
         buttonsManipulationBox.setStyle("-fx-background-color: #999");
-        buttonsManipulationBox.setPrefWidth(100);
-
-		// Top buttons
-		Button[] layerButtons = {FrontButton, BackButton, addLayerButton, deleteLayerButton};
-		for (Button layerButton : layerButtons) {
-			layerButton.setMinWidth(90);
-			layerButton.setCursor(Cursor.HAND);
-		}
-
-		ToggleGroup visibilityGroup = new ToggleGroup();
-		showButton.setToggleGroup(visibilityGroup);
-		hideButton.setToggleGroup(visibilityGroup);
-	
-		HBox layerControlsBox = new HBox(10);
-		layerControlsBox.getChildren().addAll(FrontButton, BackButton, layersLabel, layersChoiceBox, showButton, hideButton, addLayerButton, deleteLayerButton);
-		//que cuando se cree se seleccione la primer capa
-		layersChoiceBox.setValue(canvasState.getLayers().get(0));
-		layerControlsBox.setPadding(new Insets(5));
-		layerControlsBox.setAlignment(Pos.CENTER);
-		layerControlsBox.setStyle("-fx-background-color: #999");
+        buttonsManipulationBox.setPrefWidth(100);		
 
         // Handle button actions
         turnRightButton.setOnAction(event -> rotateSelectedFigure());
@@ -175,12 +132,6 @@ public class PaintPane extends BorderPane {
         duplicateButton.setOnAction(event -> duplicateSelectedFigure());
         divideButton.setOnAction(event -> divideSelectedFigure());
 		copiarFmtButton.setOnAction(event -> copyFigureFormat());
-		FrontButton.setOnAction(event -> setFrontWrapper());
-		BackButton.setOnAction(event -> setBackWrapper());
-		addLayerButton.setOnAction(event -> addLayer());
-		deleteLayerButton.setOnAction(event -> deleteLayer());
-		showButton.setOnAction(event -> showLayer());
-		hideButton.setOnAction(event -> hideLayer());
 		shadowChoiceBox.setOnAction(event -> changeShadow());
 		biseladoCheckBox.setOnAction(event -> changeBiselado());
 		fillColorPicker.setOnAction(event -> changeFillColor());
@@ -220,7 +171,7 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			figureColorMap.put(newFigure, new Pair<>(fillColorPicker.getValue(), secondaryfillColorPicker.getValue()));
-			canvasState.addFigure(layersChoiceBox.getValue(), newFigure);
+			canvasState.addFigure(selectedLayer, newFigure);
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -294,7 +245,7 @@ public class PaintPane extends BorderPane {
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				canvasState.deleteFigure(layersChoiceBox.getValue(), selectedFigure);
+				canvasState.deleteFigure(selectedLayer, selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -303,7 +254,6 @@ public class PaintPane extends BorderPane {
 		setLeft(buttonsBox);
 		setCenter(canvas);
 		setRight(buttonsManipulationBox);
-		setTop(layerControlsBox);
 		setBottom(statusPane);
 	}
 
@@ -324,8 +274,16 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+	public void setSelectedLayer(Layer selectedLayer){
+		this.selectedLayer = selectedLayer;
+	}
+
+	public Figure getSelectedFigure(){
+		return selectedFigure;
+	}
+
 	private void copyFigure(Figure f){
-		canvasState.addFigure(layersChoiceBox.getValue(), f);
+		canvasState.addFigure(selectedLayer, f);
 		figureColorMap.put(f, new Pair<>(figureColorMap.get(selectedFigure).getKey(), figureColorMap.get(selectedFigure).getValue()));
 	}
 
@@ -375,7 +333,7 @@ public class PaintPane extends BorderPane {
     private void divideSelectedFigure() {
         if (selectedFigure != null) {
             Figure[] dividedFigures = selectedFigure.divide();
-			canvasState.deleteFigure(layersChoiceBox.getValue(), selectedFigure);
+			canvasState.deleteFigure(selectedLayer, selectedFigure);
             for (Figure dividedFigure : dividedFigures) {
                 copyFigure(dividedFigure);
             }
@@ -389,60 +347,15 @@ public class PaintPane extends BorderPane {
 		figureCopyFormat = selectedFigure;
     }
 
-	private void setFrontWrapper() {
-		if(selectedFigure != null) {
-			canvasState.setFront(layersChoiceBox.getValue(), selectedFigure);
-			redrawCanvas();
-		}
-	}
-
-	private void setBackWrapper() {
-		if(selectedFigure != null) {
-			canvasState.setBack(layersChoiceBox.getValue(), selectedFigure);
-			redrawCanvas();
-		}
-	}
-
-	private void addLayer() {
-		canvasState.addLayer();
-		layersChoiceBox.getItems().add(canvasState.getLayers().getLast());
-
-		layersChoiceBox.setValue(canvasState.getLayers().getLast());
-	}
-
-	private void deleteLayer() {
-		Layer currentLayer = layersChoiceBox.getValue();
-
-		if(currentLayer.getNum() > 3) {
-			layersChoiceBox.getItems().remove(currentLayer);
-			canvasState.deleteLayer(currentLayer);
-			layersChoiceBox.setValue(canvasState.getLayers().getFirst());
-		}
-
-		redrawCanvas();
-	}
-
-	private void showLayer() {
-		canvasState.showLayer(layersChoiceBox.getValue());
-
-		redrawCanvas();
-	}
-
-	private void hideLayer() {
-		canvasState.hideLayer(layersChoiceBox.getValue());
-
-		redrawCanvas();
-	}
-
 	private void changeShadow() {
 		if(selectionButton.isSelected() && selectedFigure != null) {
-			canvasState.changeShadow(selectedFigure, getShadowType());
+			selectedFigure.setShadowType(getShadowType());
 		}
 		redrawCanvas();
 	}
 	private void changeBiselado() {
 		if(selectionButton.isSelected() && selectedFigure != null) {
-			canvasState.changeBiselado(selectedFigure, biseladoCheckBox.isSelected());
+			selectedFigure.setBiselado(biseladoCheckBox.isSelected());
 		}
 		redrawCanvas();
 
@@ -517,7 +430,7 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
-	void redrawCanvas() {
+	public void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figuresShown()) {
 			Color firstFillColor = figureColorMap.get(figure).getKey();
