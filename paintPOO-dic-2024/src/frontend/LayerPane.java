@@ -7,27 +7,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.RadialGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.ArcType;
-import javafx.util.Pair;
 import javafx.scene.control.Label; 
 import javafx.scene.control.ChoiceBox;
 import javafx.collections.FXCollections;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.RadioButton;
-import org.w3c.dom.css.Rect;
 
 public class LayerPane extends BorderPane {
 
@@ -83,7 +71,7 @@ public class LayerPane extends BorderPane {
 				hideButton.fire();
 			}
 		});
-		
+
 		// Handle button actions
 		FrontButton.setOnAction(event -> setFrontWrapper());
 		BackButton.setOnAction(event -> setBackWrapper());
